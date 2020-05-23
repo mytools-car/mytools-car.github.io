@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Athena SQL Generator</title>
+    <link rel="stylesheet" type="text/css" href="stylepage.css" />
+</head>
+<script src='index.js'></script>
+<body onload="onInit()">
+        <h1>Athena SQL Generator</h1>
+        <h3>SELECT</h3>
+        <div id="selectioncriteria">
+        </div>
+
+        <div id="fromtable">
+        <h3 for="tablename">FROM</h3>
+        apilogs. <input type="text" id="tablename" name="tablename"> 
+        </div>
+
+        <div id="whereclause">
+        <h3>WHERE</h3>
+        </div>
+        <p style="margin-bottom:0.7cm;"></p>
+        <div id="generatescr">
+            <button type="button" id="generatescript" onclick="generateAthenaScript()">Generate SQL</button>
+            <button type="button" id="generatescript" onclick="copySql()">Copy SQL</button>
+            <button type="button" id="generatescript" onclick="clearSelect()">Clear SELECT</button>
+            <button type="button" id="generatescript" onclick="clearWhere()">Clear WHERE</button>
+
+        </div>
+        <textarea id="sqlcode" rows="4" cols="50">Your script will be generated here :)</textarea>
+</body>
+</html>
