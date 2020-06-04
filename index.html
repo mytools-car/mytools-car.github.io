@@ -21,12 +21,20 @@
         <h3>WHERE</h3>
         </div>
         <p style="margin-bottom:0.7cm;"></p>
+        <div>
+            <div id="group"><input type="checkbox" id="addGroup" value="GROUP BY" onchange=addGroup(this)>
+                <label for="addGroup"> GROUP BY </label></div>
+            <div id="order"><input type="checkbox" id="addOrder" value="ORDER BY" onchange=addOrder(this)>
+                <label for="addOrder"> ORDER BY </label></div>
+            <div id="limit"><input type="checkbox" id="addLimit" value="LIMIT" onchange=addLimit(this)>
+                <label for="addLimit"> LIMIT </label></div>
+        </div>
+        <p style="margin-bottom:0.7cm;"></p>
         <div id="generatescr">
-            <button type="button" id="generatescript" onclick="generateAthenaScript()">Generate SQL</button>
-            <button type="button" id="generatescript" onclick="copySql()">Copy SQL</button>
-            <button type="button" id="generatescript" onclick="clearSelect()">Clear SELECT</button>
-            <button type="button" id="generatescript" onclick="clearWhere()">Clear WHERE</button>
-
+            <button type="button" onclick="generateAthenaScript()">Generate SQL</button>
+            <button type="button" onclick="copySql()">Copy SQL</button>
+            <button type="button" onclick="clearSelect()">Clear SELECT</button>
+            <button type="button" onclick="clearWhere()">Clear WHERE</button>
         </div>
         <textarea id="sqlcode" rows="4" cols="50">Your script will be generated here :)</textarea>
 </body>

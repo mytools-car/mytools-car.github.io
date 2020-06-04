@@ -20,9 +20,60 @@ function onInit(){
     this.iTextBoxId = []; // subobject box id
     this.iOperatorId = []; // operator id
 
+    var aColumns = ["anonymousid","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","event","name","groupid","previousid"];
+    var aColumns2 = ["ASC","DESC"];
+    var oSelect = document.createElement("select");
+    oSelect.setAttribute("style","margin:5px;");
+    oSelect.style.visibility = "hidden"; 
+    oSelect.id = "groupSel";
+
+    var oSelect2 = document.createElement("select");
+    oSelect2.setAttribute("style","margin:5px;");
+    oSelect2.style.visibility = "hidden"; 
+    oSelect2.id = "orderSel";
+
+    var oSelect3 = document.createElement("select");
+    oSelect3.setAttribute("style","margin:5px;");
+    oSelect3.style.visibility = "hidden"; 
+    oSelect3.id = "asdescSel";
+
+    aColumns.forEach(function(sText){
+        var oOption = document.createElement("option");
+        oOption.appendChild(document.createTextNode(sText));
+        oOption.setAttribute("value",sText);
+        oSelect.appendChild(oOption);
+    });
+
+    aColumns.forEach(function(sText){
+        var oOption = document.createElement("option");
+        oOption.appendChild(document.createTextNode(sText));
+        oOption.setAttribute("value",sText);
+        oSelect2.appendChild(oOption);
+    });
+
+    aColumns2.forEach(function(sText){
+        var oOption = document.createElement("option");
+        oOption.appendChild(document.createTextNode(sText));
+        oOption.setAttribute("value",sText);
+        oSelect3.appendChild(oOption);
+    });
+    
+    var oValue = document.createElement("input");
+    oValue.type = "text";
+    oValue.setAttribute("id","limitBox");
+    oValue.style.visibility = "hidden"; 
+
+    document.getElementById("group").appendChild(oSelect);
+    document.getElementById("order").appendChild(oSelect2);
+    document.getElementById("order").appendChild(oSelect3);
+    document.getElementById("limit").appendChild(oValue);
+
+    
     // Generate initial selection criteria
     generateObjectDiv(1);
     generateWhereDiv(true);
+
+
 }
 
 // Generate the select column dropdown
@@ -469,6 +520,19 @@ function generateAthenaScript(){
         finalSelect += temp3;
         
     }
+
+    if(document.getElementById("addGroup").checked){
+        finalSelect += " GROUP BY " + document.getElementById("groupSel").value;
+    }
+
+    if(document.getElementById("addOrder").checked){
+        finalSelect += " ORDER BY " + document.getElementById("orderSel").value + " " + document.getElementById("asdescSel").value;
+    }
+
+    if(document.getElementById("addLimit").checked){
+        finalSelect += " LIMIT " + document.getElementById("limitBox").value;
+    }
+
     finalSelect += ";";
     document.getElementById('sqlcode').value = finalSelect;
 }
@@ -478,7 +542,6 @@ function copySql(){
     textarea.select();
     document.execCommand("copy");
 }
-
 
 function clearSelect(){
     iSelectBoxId.forEach(function(sText){
@@ -513,4 +576,31 @@ function clearWhere(){
 
     generateWhereDiv(true);
 
+}
+
+function addGroup(checkboxElem) {
+  if (checkboxElem.checked) {
+    document.getElementById("groupSel").style.visibility = "visible"; 
+  } else {
+    document.getElementById("groupSel").style.visibility = "hidden"; 
+  }
+}
+
+function addOrder(checkboxElem) {
+  if (checkboxElem.checked) {
+    document.getElementById("orderSel").style.visibility = "visible"; 
+    document.getElementById("asdescSel").style.visibility = "visible"; 
+    // if checked show dropdown with columns and dropdown with asc desc
+  } else {
+    document.getElementById("orderSel").style.visibility = "hidden"; 
+    document.getElementById("asdescSel").style.visibility = "hidden"; 
+  }
+}
+
+function addLimit(checkboxElem) {
+  if (checkboxElem.checked) {
+    document.getElementById("limitBox").style.visibility = "visible"; 
+  } else {
+    document.getElementById("limitBox").style.visibility = "hidden"; 
+  }
 }
