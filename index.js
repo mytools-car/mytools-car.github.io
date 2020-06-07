@@ -20,52 +20,40 @@ function onInit(){
     this.iTextBoxId = []; // subobject box id
     this.iOperatorId = []; // operator id
 
-    var aColumns = ["anonymousid","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","event","name","groupid","previousid"];
-    var aColumns2 = ["ASC","DESC"];
+    var oValue1 = document.createElement("input");
+    oValue1.type = "text";
+    oValue1.setAttribute("id","groupBox");
+    oValue1.setAttribute("size","2");
+    oValue1.style.visibility = "hidden"; 
+
+    var oValue2 = document.createElement("input");
+    oValue2.type = "text";
+    oValue2.setAttribute("id","orderBox");
+    oValue2.setAttribute("size","2");
+    oValue2.style.visibility = "hidden"; 
+
     var oSelect = document.createElement("select");
-    oSelect.setAttribute("style","margin:5px;");
+    oSelect.setAttribute("style","margin:3px;");
     oSelect.style.visibility = "hidden"; 
-    oSelect.id = "groupSel";
+    oSelect.id = "asdescSel";
 
-    var oSelect2 = document.createElement("select");
-    oSelect2.setAttribute("style","margin:5px;");
-    oSelect2.style.visibility = "hidden"; 
-    oSelect2.id = "orderSel";
-
-    var oSelect3 = document.createElement("select");
-    oSelect3.setAttribute("style","margin:5px;");
-    oSelect3.style.visibility = "hidden"; 
-    oSelect3.id = "asdescSel";
-
+    var aColumns = ["ASC","DESC"];
     aColumns.forEach(function(sText){
         var oOption = document.createElement("option");
         oOption.appendChild(document.createTextNode(sText));
         oOption.setAttribute("value",sText);
         oSelect.appendChild(oOption);
     });
-
-    aColumns.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect2.appendChild(oOption);
-    });
-
-    aColumns2.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect3.appendChild(oOption);
-    });
     
     var oValue = document.createElement("input");
     oValue.type = "text";
     oValue.setAttribute("id","limitBox");
+    oValue.setAttribute("size","3");
     oValue.style.visibility = "hidden"; 
 
-    document.getElementById("group").appendChild(oSelect);
-    document.getElementById("order").appendChild(oSelect2);
-    document.getElementById("order").appendChild(oSelect3);
+    document.getElementById("group").appendChild(oValue1);
+    document.getElementById("order").appendChild(oValue2);
+    document.getElementById("order").appendChild(oSelect);
     document.getElementById("limit").appendChild(oValue);
 
     
@@ -158,10 +146,11 @@ function generateObjectDiv(onInit){
 }
 
 function generateOperators(pos){
-    var aColumns = ["=",">","<",">=","<=","!=","IN","NOT IN","LIKE"];
+    var aColumns = ["=",">","<",">=","<=","!=","IN","NOT IN","LIKE","NOT LIKE","IS NULL","IS NOT NULL"];
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id","opId" + pos);
     oSelect.setAttribute("style","margin:5px;");
+    oSelect.setAttribute("onchange", "onOperatorChange(this)");
     iOperatorId.push("opId" + this.iWhereCounter); 
 
     aColumns.forEach(function(sText){
@@ -230,14 +219,25 @@ function onWhereChange(obj){
     if (iOperatorId.includes("opId"+pos) == false){
         var oOperator = generateOperators(pos);
         obj.parentElement.appendChild(oOperator);
-
         var oValue = document.createElement("input");
         oValue.type = "text";
         // crear textbox con el mismo numero del whereelement
         oValue.setAttribute("id","valueBox" + pos);
         obj.parentElement.appendChild(oValue);
+            
     }
 
+}
+
+function onOperatorChange(obj){
+    var temp = obj.id.substr(-1);
+    if(obj.value == "IS NULL" || obj.value == "IS NOT NULL"){
+
+        document.getElementById("valueBox"+temp).style.visibility = "hidden";
+    }  
+    else{
+        document.getElementById("valueBox"+temp).style.visibility = "visible";
+    } 
 }
 
 // Remove select column
@@ -325,7 +325,8 @@ function generateWhereDiv(onInit){
     //where condition increments TODO ADD MORE
     var aColumns = ["Add Object","anonymousid","messageid","timestamp","originaltimestamp","type","userid",
     "event","name","groupid","previousid","integrations","traits","properties","context.ip","context.app.name",
-    "context.app.version","context.campaign.source", "context.campaign.medium","context.traits"];
+    "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
+    "context.device.advertisingId","context.device.adTrackingEnabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id",this.sWDefaultId + this.iWhereCounter);
@@ -454,6 +455,11 @@ function generateAthenaScript(){
                         temp3 += col1 + " " + col2 + " ('" + res + "')";
                     }
                     break;
+                    case "IS NULL":
+                    case "IS NOT NULL":{
+                        temp3 += col1 + " " +col2;
+                    }
+                    break;
                     default:
                         temp3 += col1 + " " + col2 + " '" + document.getElementById("valueBox"+pos).value + "'";
                 }
@@ -522,11 +528,11 @@ function generateAthenaScript(){
     }
 
     if(document.getElementById("addGroup").checked){
-        finalSelect += " GROUP BY " + document.getElementById("groupSel").value;
+        finalSelect += " GROUP BY " + document.getElementById("groupBox").value;
     }
 
     if(document.getElementById("addOrder").checked){
-        finalSelect += " ORDER BY " + document.getElementById("orderSel").value + " " + document.getElementById("asdescSel").value;
+        finalSelect += " ORDER BY " + document.getElementById("orderBox").value + " " + document.getElementById("asdescSel").value;
     }
 
     if(document.getElementById("addLimit").checked){
@@ -580,19 +586,19 @@ function clearWhere(){
 
 function addGroup(checkboxElem) {
   if (checkboxElem.checked) {
-    document.getElementById("groupSel").style.visibility = "visible"; 
+    document.getElementById("groupBox").style.visibility = "visible"; 
   } else {
-    document.getElementById("groupSel").style.visibility = "hidden"; 
+    document.getElementById("groupBox").style.visibility = "hidden"; 
   }
 }
 
 function addOrder(checkboxElem) {
   if (checkboxElem.checked) {
-    document.getElementById("orderSel").style.visibility = "visible"; 
+    document.getElementById("orderBox").style.visibility = "visible"; 
     document.getElementById("asdescSel").style.visibility = "visible"; 
     // if checked show dropdown with columns and dropdown with asc desc
   } else {
-    document.getElementById("orderSel").style.visibility = "hidden"; 
+    document.getElementById("orderBox").style.visibility = "hidden"; 
     document.getElementById("asdescSel").style.visibility = "hidden"; 
   }
 }
