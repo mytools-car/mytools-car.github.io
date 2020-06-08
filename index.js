@@ -3,7 +3,7 @@
 // ODiv IDs = "line"+this.iSelectCounter
 // Add Button IDs = "button"+this.iSelectCounter
 // Remove Button IDs = "buttonrem"+this.iSelectCounter
-var finalSelect;
+
 
 // On page load it will first generate the initial select and the where clause add condition
 function onInit(){
@@ -19,7 +19,6 @@ function onInit(){
     this.iWhereButtonRemId = []; // remove where button id
     this.iTextBoxId = []; // subobject box id
     this.iOperatorId = []; // operator id
-
 
     var oValue1 = document.createElement("input");
     oValue1.type = "text";
@@ -327,7 +326,7 @@ function generateWhereDiv(onInit){
     var aColumns = ["Add Object","anonymousid","messageid","timestamp","originaltimestamp","type","userid",
     "event","name","groupid","previousid","integrations","traits","properties","context.ip","context.app.name",
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
-    "context.device.advertisingId","context.device.adTrackingEnabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
+    "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id",this.sWDefaultId + this.iWhereCounter);
@@ -388,7 +387,7 @@ function generateWhereDiv(onInit){
 }
 
 function generateAthenaScript(){
-    finalSelect = "SELECT ";
+    var finalSelect = "SELECT ";
     var sel = document.getElementById(iSelectBoxId[0]);
     var temp = sel.options[sel.selectedIndex].value;
 
@@ -437,9 +436,10 @@ function generateAthenaScript(){
             // second level properties from context object G3
             var oProps3 = ["context.ip"];
             // third level properties from context object G4 
-            // TODO ADD MORE
-            var oProps4 = ["context.app.name","context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.app.name","context.device.id","context.device.advertisingId","context.device.adTrackingEnabled","context.device.token","context.library.name","context.page.referrer"];
-  
+            // TODO ADD MORE "context.app.name",
+    
+            var oProps4 = ["context.app.name","context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
+            "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer"];
             // third level properties from context traits and textbox G5
             var oProps5 = ["context.traits"];
 
@@ -453,6 +453,8 @@ function generateAthenaScript(){
                     case "NOT IN":{
                         var res = document.getElementById("valueBox"+pos).value;
                         res = res.split(", ").join(",");
+                        res = res.split("'").join("");
+                        res = res.split('"').join("");
                         res = res.split(",").join("','");
                         temp3 += col1 + " " + col2 + " ('" + res + "')";
                     }

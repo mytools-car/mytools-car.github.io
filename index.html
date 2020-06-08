@@ -5,7 +5,7 @@
     <title>Athena SQL Generator</title>
     <link rel="stylesheet" type="text/css" href="stylepage.css" />
 </head>
-
+<script src='index.js'></script>
 <body onload="onInit()">
         <h1>Athena SQL Generator</h1>
         <h3>SELECT</h3>
@@ -36,10 +36,6 @@
             <button type="button" onclick="clearSelect()">Clear SELECT</button>
             <button type="button" onclick="clearWhere()">Clear WHERE</button>
         </div>
-        <script id="tablescript-hdbs" type="text/x-handlebars-template">
-            <textarea id="sqlcode" rows="4" cols="50">{{finalSelect}}</textarea>
-        </script>
-        <script src='index.js'></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+        <textarea id="sqlcode" rows="4" cols="50">Your script will be generated here :)</textarea>
 </body>
 </html>
