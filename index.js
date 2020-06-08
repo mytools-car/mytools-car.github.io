@@ -435,9 +435,7 @@ function generateAthenaScript(){
             var oProps2 = ["integrations","traits","properties"];
             // second level properties from context object G3
             var oProps3 = ["context.ip"];
-            // third level properties from context object G4 
-            // TODO ADD MORE "context.app.name",
-    
+            // third level properties from context object G4  
             var oProps4 = ["context.app.name","context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
             "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer"];
             // third level properties from context traits and textbox G5
@@ -447,15 +445,16 @@ function generateAthenaScript(){
             var col2 = document.getElementById("opId"+pos);
                 col2 = col2.options[col2.selectedIndex].value;
 
+            var res = document.getElementById("valueBox"+pos).value;
+            res = res.split(", ").join(",");
+            res = res.split("'").join("");
+            res = res.split('"').join("");
+            res = res.split(",").join("','");
+            
             if (oProps1.includes(col1)){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        var res = document.getElementById("valueBox"+pos).value;
-                        res = res.split(", ").join(",");
-                        res = res.split("'").join("");
-                        res = res.split('"').join("");
-                        res = res.split(",").join("','");
                         temp3 += col1 + " " + col2 + " ('" + res + "')";
                     }
                     break;
@@ -472,10 +471,12 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        var res = document.getElementById("valueBox"+pos).value;
-                        res = res.split(", ").join(",");
-                        res = res.split(",").join("','");
                         temp3 += col1+"['"+ document.getElementById("textBox"+pos).value +"'] " + col2 + " ('" + res + "')";
+                    }
+                    break;
+                    case "IS NULL":
+                    case "IS NOT NULL":{
+                        temp3 += col1 + " " +col2;
                     }
                     break;
                     default:
@@ -486,10 +487,12 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        var res = document.getElementById("valueBox"+pos).value;
-                        res = res.split(", ").join(",");
-                        res = res.split(",").join("','");
                         temp3 += "context['ip'] " + col2 + " ('" + res + "')";
+                    }
+                    break;
+                    case "IS NULL":
+                    case "IS NOT NULL":{
+                        temp3 += col1 + " " +col2;
                     }
                     break;
                     default:
@@ -501,10 +504,12 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        var res = document.getElementById("valueBox"+pos).value;
-                        res = res.split(", ").join(",");
-                        res = res.split(",").join("','");
                         temp3 += "json_extract_scalar("+col3[0]+"['"+col3[1]+"'],'$."+ col3[2] + "') " + col2 + " ('" + res + "')";
+                    }
+                    break;
+                    case "IS NULL":
+                    case "IS NOT NULL":{
+                        temp3 += col1 + " " +col2;
                     }
                     break;
                     default:
@@ -515,10 +520,12 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        var res = document.getElementById("valueBox"+pos).value;
-                        res = res.split(", ").join(",");
-                        res = res.split(",").join("','");
                         temp3 += "json_extract_scalar(context['traits'],'$."+document.getElementById("textBox"+pos).value + "') " + col2 + " ('" + res + "')";
+                    }
+                    break;
+                    case "IS NULL":
+                    case "IS NOT NULL":{
+                        temp3 += col1 + " " +col2;
                     }
                     break;
                     default:
@@ -562,11 +569,8 @@ function clearSelect(){
     iSelectBoxId = []; // select clauses id
     iSelectButtonId = []; // add select button id
     iRemoveButtonId = []; // remove select button id
-
-    //var oSelect = this.generateSelect(1);
     generateObjectDiv(1);
 }
-
 
 function clearWhere(){
     iWhereOptId.forEach(function(sText){
@@ -580,7 +584,6 @@ function clearWhere(){
     iWhereButtonId = []; // add where button id
     iWhereButtonRemId = []; // remove where button id
 
-    //not sure if
     iTextBoxId = []; // subobject box id
     iOperatorId = []; // operator id
 
