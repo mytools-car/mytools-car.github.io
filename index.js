@@ -103,13 +103,11 @@ function generateObjectDiv(onInit){
 
     //Generate add object button (hidden per default)
     var oBtn = document.createElement("button");
-    oBtn.setAttribute("class","btn tooltip");
     oBtn.setAttribute("id","button"+this.iSelectCounter);
     iSelectButtonId.push("button"+this.iSelectCounter);
 
     oBtn.appendChild(document.createTextNode("+"));
     var oSpan = document.createElement("span");
-    oSpan.setAttribute("class", "tooltiptext");
     oBtn.appendChild(oSpan);
     oBtn.setAttribute("onclick","addColumn(this)");
 
@@ -119,12 +117,10 @@ function generateObjectDiv(onInit){
 
     // generate remove button
     var oBtn2 = document.createElement("button");
-    oBtn2.setAttribute("class","btn tooltip");
     oBtn2.setAttribute("id","buttonrem"+this.iSelectCounter);
     iRemoveButtonId.push("buttonrem"+this.iSelectCounter);
 
     var oSpan2 = document.createElement("span");
-    oSpan2.setAttribute("class", "tooltiptext");
     oSpan2.appendChild(document.createTextNode("Remove"));
     oBtn2.appendChild(oSpan2);
     oBtn2.setAttribute("onclick","removeColumn(this)");
@@ -350,24 +346,20 @@ function generateWhereDiv(onInit){
     oDiv3.setAttribute("id","condbuttons"+ this.iWhereCounter);
 
     var oBtn = document.createElement("button");
-    oBtn.setAttribute("class","btn tooltip");
     oBtn.setAttribute("id","wherebutton"+this.iWhereCounter);
     iWhereButtonId.push("wherebutton"+this.iWhereCounter);
 
     var oSpan = document.createElement("span");
-    oSpan.setAttribute("class", "tooltiptext");
     oBtn.appendChild(oSpan);
     oBtn.setAttribute("onclick","addWhere(this)");
     oBtn.appendChild(document.createTextNode("+"));
     oDiv3.appendChild(oBtn);
 
     var oBtn2 = document.createElement("button");
-    oBtn2.setAttribute("class","btn tooltip");
     oBtn2.setAttribute("id","buttonwrem"+this.iWhereCounter);
     iWhereButtonRemId.push("buttonwrem"+this.iWhereCounter);
 
     var oSpan2 = document.createElement("span");
-    oSpan2.setAttribute("class", "tooltiptext");
     oSpan2.appendChild(document.createTextNode("Remove"));
     oBtn2.appendChild(oSpan2);
     oBtn2.setAttribute("onclick","removeWhere(this)");
@@ -476,7 +468,7 @@ function generateAthenaScript(){
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += col1 + " " +col2;
+                        temp3 += col1 +"['"+ document.getElementById("textBox"+pos).value +"'] " + col2;
                     }
                     break;
                     default:
@@ -492,7 +484,7 @@ function generateAthenaScript(){
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += col1 + " " +col2;
+                        temp3 += "context['ip'] " +col2;
                     }
                     break;
                     default:
@@ -509,7 +501,7 @@ function generateAthenaScript(){
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += col1 + " " +col2;
+                        temp3 += "json_extract_scalar("+col3[0]+"['"+col3[1]+"'],'$."+ col3[2] + "') " + col2;
                     }
                     break;
                     default:
@@ -525,7 +517,7 @@ function generateAthenaScript(){
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += col1 + " " +col2;
+                        temp3 += "json_extract_scalar(context['traits'],'$."+document.getElementById("textBox"+pos).value + "') " + col2;
                     }
                     break;
                     default:
