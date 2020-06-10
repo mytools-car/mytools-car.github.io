@@ -66,7 +66,7 @@ function onInit(){
 // Generate the select column dropdown
 function generateSelect(onInit){
    if(onInit == 1 && iSelectBoxId.length == 0){
-        var aColumns = ["*","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
+        var aColumns = ["*","COUNT(*)","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
     }
     else{
         var aColumns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
@@ -92,7 +92,6 @@ function generateSelect(onInit){
 // Generate the divs where the columns and buttons are going to be
 function generateObjectDiv(onInit){
     var oDiv = document.createElement("div");
-    oDiv.setAttribute("class","flex-container");
     oDiv.setAttribute("id","line"+this.iSelectCounter);
 
 
@@ -110,7 +109,6 @@ function generateObjectDiv(onInit){
     oBtn.appendChild(oSpan);
     oBtn.setAttribute("onclick","addColumn(this)");
 
-    //oDiv.appendChild(oText);
     oDiv.appendChild(oSelect);
     oDiv.appendChild(oBtn);
 
@@ -130,7 +128,6 @@ function generateObjectDiv(onInit){
     document.getElementById(iRemoveButtonId[0]).style.visibility = "hidden"; 
 
     var selVal = document.getElementById(iSelectBoxId[0]);
-    // dunno if second condition is worth it
     if (selVal.options[selVal.selectedIndex].value == "*" && iSelectButtonId.length == 1){
         oBtn.style.visibility = "hidden";
     }
@@ -288,14 +285,12 @@ function generateWhereDiv(onInit){
 
     // odiv contains odiv2 and odiv3
     var oDiv = document.createElement("div");
-    oDiv.setAttribute("class","flex-container");
     oDiv.setAttribute("id","cond"+ this.iWhereCounter);
 
     var pos = oDiv.id[oDiv.id.length -1];
 
     // odiv2 is div with condition
     var oDiv2 = document.createElement("div");
-    oDiv2.setAttribute("class","flex-container");
     //oDiv2.setAttribute("id","andorDiv"+ this.iWhereCounter);
 
     // And/Or switch going in odiv2
@@ -356,7 +351,6 @@ function generateWhereDiv(onInit){
     
     // odiv3 is ADD REMOVE options
     var oDiv3 = document.createElement("div");
-    oDiv3.setAttribute("class","flex-container");
     oDiv3.setAttribute("id","condbuttons"+ this.iWhereCounter);
 
     var oBtn = document.createElement("button");
