@@ -61,7 +61,6 @@ function onInit(){
     generateObjectDiv(1);
     generateWhereDiv(true);
 
-
 }
 
 // Generate the select column dropdown
@@ -176,7 +175,7 @@ function addWhere(obj) {
 function onSelectChange(obj){
     var index = iSelectBoxId.indexOf(obj.id);
     var selectedValue = obj.options[obj.selectedIndex].value;
-    if (selectedValue != "*"){
+    if (selectedValue != "*" && index == 0 && iSelectBoxId.length == 1){
         document.getElementById(iSelectButtonId[index]).style.visibility = "visible";
     }
     else{
@@ -323,6 +322,10 @@ function generateWhereDiv(onInit){
     "event","name","groupid","previousid","integrations","traits","properties","context.ip","context.app.name",
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
     "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
+
+    if (iWhereOptId.length > 0){
+        aColumns.shift();
+    }
 
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id",this.sWDefaultId + this.iWhereCounter);
