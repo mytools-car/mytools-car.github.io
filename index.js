@@ -69,7 +69,7 @@ function generateSelect(onInit){
         var aColumns = ["*","COUNT(*)","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
     }
     else{
-        var aColumns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
+        var aColumns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid","COUNT(*)"];
     }
 
     var oSelect = document.createElement("select");
@@ -175,7 +175,7 @@ function onSelectChange(obj){
     if (selectedValue != "*" && index == 0 && iSelectBoxId.length == 1){
         document.getElementById(iSelectButtonId[index]).style.visibility = "visible";
     }
-    else{
+    else if (index < iSelectBoxId.length-1){
         document.getElementById(iSelectButtonId[index]).style.visibility = "hidden";
     }
 }
@@ -603,7 +603,6 @@ function addOrder(checkboxElem) {
   if (checkboxElem.checked) {
     document.getElementById("orderBox").style.visibility = "visible"; 
     document.getElementById("asdescSel").style.visibility = "visible"; 
-    // if checked show dropdown with columns and dropdown with asc desc
   } else {
     document.getElementById("orderBox").style.visibility = "hidden"; 
     document.getElementById("asdescSel").style.visibility = "hidden"; 
