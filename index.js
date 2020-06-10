@@ -195,7 +195,6 @@ function onWhereChange(obj){
         if (iTextBoxId.length == 0 || (iTextBoxId.includes("textBox"+pos) == false)){
             var oTextBox = document.createElement("input");
             oTextBox.type = "text";
-            // crear textbox con el mismo numero del whereelement
             oTextBox.setAttribute("id","textBox" + pos);
             iTextBoxId.push("textBox" + pos);
             obj.parentNode.insertBefore(oTextBox, obj.nextSibling);
@@ -323,15 +322,16 @@ function generateWhereDiv(onInit){
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
     "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
-    if (iWhereOptId.length > 0){
-        aColumns.shift();
-    }
 
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id",this.sWDefaultId + this.iWhereCounter);
     oSelect.setAttribute("style","margin:5px;");
     oSelect.setAttribute("onchange", "onWhereChange(this)");
     iWhereOptId.push(this.sWDefaultId + this.iWhereCounter);
+
+        if (iWhereOptId.length > 1){
+        aColumns.shift();
+    }
 
     aColumns.forEach(function(sText){
         var oOption = document.createElement("option");
@@ -341,6 +341,17 @@ function generateWhereDiv(onInit){
     });
 
     oDiv2.appendChild(oSelect);
+
+    if (iWhereOptId.length > 1){
+            var oOperator = generateOperators(this.iWhereCounter);
+            oDiv2.appendChild(oOperator);
+
+            var oValue = document.createElement("input");
+            oValue.type = "text";
+            oValue.setAttribute("id","valueBox" + this.iWhereCounter);
+            oDiv2.appendChild(oValue);
+    }
+
     oDiv.appendChild(oDiv2); 
     
     // odiv3 is ADD REMOVE options
