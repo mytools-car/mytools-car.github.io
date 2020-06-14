@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Athena SQL Generator</title>
+    <title>Athena SQL Generator V2 HB</title>
     <link rel="stylesheet" type="text/css" href="stylepage.css" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 </head>
-<script src='index.js'></script>
-<body onload="onInit()">
-        <h1>Athena SQL Generator</h1>
+<body onload="renderPage(renderSqlData())">
+        <h1>Athena SQL Generator  V2 HB</h1>
         <h3>SELECT</h3>
         <div id="selectioncriteria">
         </div>
@@ -36,6 +36,12 @@
             <button type="button" onclick="clearSelect()">Clear SELECT</button>
             <button type="button" onclick="clearWhere()">Clear WHERE</button>
         </div>
-        <textarea id="sqlcode" rows="5" cols="75">Your script will be generated here :)</textarea>
+        <div id="content"></div>
+        <script id="tablescript-hdbs" type="text/x-handlebars-template">
+            <textarea id="sqlcode" rows="4" cols="50">{{finalSelect}}</textarea>
+        </script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+        <script src='index.js'></script>
 </body>
 </html>

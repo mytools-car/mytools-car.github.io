@@ -1,11 +1,26 @@
-// Add Select Column IDs = this.sDefaultId + this.iSelectCounter
-// Add Where conditions = wherecond + this.iWhereCounter
-// ODiv IDs = "line"+this.iSelectCounter
-// Add Button IDs = "button"+this.iSelectCounter
-// Remove Button IDs = "buttonrem"+this.iSelectCounter
+var finalSelect="Set your SQL here";
+var source = $("#tablescript-hdbs").html();
+var client;
 
+function setSqlData() {
+  var data = {};
+  data.finalSelect = finalSelect;
+  return data;
+}
 
-// On page load it will first generate the initial select and the where clause add condition
+function renderPage(data) {
+  var context = data;
+  var template = Handlebars.compile(source);
+  var html = template(context);
+  $("#content").html(html);
+}
+
+function renderSqlData() {
+  source = $("#tablescript-hdbs").html();
+  renderPage(setSqlData());
+  onInit();
+}
+
 function onInit(){
     this.sDefaultId = "SelectElement";
     this.sWDefaultId = "WhereElement";
@@ -20,50 +35,20 @@ function onInit(){
     this.iTextBoxId = []; // subobject box id
     this.iOperatorId = []; // operator id
 
-    var oValue1 = document.createElement("input");
-    oValue1.type = "text";
-    oValue1.setAttribute("id","groupBox");
-    oValue1.setAttribute("size","2");
-    oValue1.style.visibility = "hidden"; 
-
-    var oValue2 = document.createElement("input");
-    oValue2.type = "text";
-    oValue2.setAttribute("id","orderBox");
-    oValue2.setAttribute("size","2");
-    oValue2.style.visibility = "hidden"; 
-
-    var oSelect = document.createElement("select");
-    oSelect.setAttribute("style","margin:3px;");
-    oSelect.style.visibility = "hidden"; 
-    oSelect.id = "asdescSel";
-
-    var aColumns = ["ASC","DESC"];
-    aColumns.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect.appendChild(oOption);
-    });
-    
-    var oValue = document.createElement("input");
-    oValue.type = "text";
-    oValue.setAttribute("id","limitBox");
-    oValue.setAttribute("size","3");
-    oValue.style.visibility = "hidden"; 
+    var oValue1 = generateTextBox("groupBox","2",0);
+    var oValue2 = generateTextBox("orderBox","2",0);
+    var oSelect = generateSelectMenu("asdescSel",["ASC","DESC"],0); 
+    var oValue = generateTextBox("limitBox","3",0);
 
     document.getElementById("group").appendChild(oValue1);
     document.getElementById("order").appendChild(oValue2);
     document.getElementById("order").appendChild(oSelect);
     document.getElementById("limit").appendChild(oValue);
 
-    
-    // Generate initial selection criteria
-    generateObjectDiv(1);
+    generateColumnsDiv(1);
     generateWhereDiv(true);
-
 }
 
-// Generate the select column dropdown
 function generateSelect(onInit){
    if(onInit == 1 && iSelectBoxId.length == 0){
         var aColumns = ["*","COUNT(*)","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
@@ -72,58 +57,27 @@ function generateSelect(onInit){
         var aColumns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid","COUNT(*)"];
     }
 
-    var oSelect = document.createElement("select");
-    oSelect.setAttribute("id",this.sDefaultId + this.iSelectCounter);
-    oSelect.setAttribute("style","margin:5px;");
+    var oSelect = generateSelectMenu(this.sDefaultId + this.iSelectCounter,aColumns,1);
     oSelect.setAttribute("onchange", "onSelectChange(this)");
     iSelectBoxId.push(this.sDefaultId + this.iSelectCounter); 
-
-    aColumns.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect.appendChild(oOption);
-    });
-
     return oSelect;
-
 }
 
-// Generate the divs where the columns and buttons are going to be
-function generateObjectDiv(onInit){
+function generateColumnsDiv(onInit){
     var oDiv = document.createElement("div");
-    oDiv.setAttribute("id","line"+this.iSelectCounter);
-
-
-    //Add first Select Object and text
     var oSelect = this.generateSelect(onInit);
-    //var oText = document.createTextNode("Col:");
-
-    //Generate add object button (hidden per default)
-    var oBtn = document.createElement("button");
-    oBtn.setAttribute("id","button"+this.iSelectCounter);
+    var oBtn = generateButton("button"+this.iSelectCounter,"+",1);
     iSelectButtonId.push("button"+this.iSelectCounter);
-
-    oBtn.appendChild(document.createTextNode("+"));
-    var oSpan = document.createElement("span");
-    oBtn.appendChild(oSpan);
     oBtn.setAttribute("onclick","addColumn(this)");
 
     oDiv.appendChild(oSelect);
     oDiv.appendChild(oBtn);
 
-    // generate remove button
-    var oBtn2 = document.createElement("button");
-    oBtn2.setAttribute("id","buttonrem"+this.iSelectCounter);
+    var oBtn2 = generateButton("buttonrem"+this.iSelectCounter,"Remove",1);
     iRemoveButtonId.push("buttonrem"+this.iSelectCounter);
-
-    var oSpan2 = document.createElement("span");
-    oSpan2.appendChild(document.createTextNode("Remove"));
-    oBtn2.appendChild(oSpan2);
     oBtn2.setAttribute("onclick","removeColumn(this)");
     oDiv.appendChild(oBtn2);
     
-
     document.getElementById("selectioncriteria").appendChild(oDiv);
     document.getElementById(iRemoveButtonId[0]).style.visibility = "hidden"; 
 
@@ -139,40 +93,26 @@ function generateObjectDiv(onInit){
 
 function generateOperators(pos){
     var aColumns = ["=",">","<",">=","<=","!=","IN","NOT IN","LIKE","NOT LIKE","IS NULL","IS NOT NULL"];
-    var oSelect = document.createElement("select");
-    oSelect.setAttribute("id","opId" + pos);
-    oSelect.setAttribute("style","margin:5px;");
+    var oSelect = generateSelectMenu("opId" + pos,aColumns,1);
     oSelect.setAttribute("onchange", "onOperatorChange(this)");
-    iOperatorId.push("opId" + this.iWhereCounter); 
-
-    aColumns.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect.appendChild(oOption);
-    });
-
+    iOperatorId.push("opId" + this.iWhereCounter);
     return oSelect;
-
 }
 
-// Add column if button add column is pressed
 function addColumn(obj) {
     this.iSelectCounter++;
-    generateObjectDiv(1);
+    generateColumnsDiv(1);
 } 
 
-// Add where condition if button add cond is pressed
 function addWhere(obj) {
     this.iWhereCounter++;
     generateWhereDiv(true);
 } 
 
-// On Column Change show/hide add object button: Possible to add column to the SELECT if the criteria is not *
 function onSelectChange(obj){
     var index = iSelectBoxId.indexOf(obj.id);
     var selectedValue = obj.options[obj.selectedIndex].value;
-    if (selectedValue != "*" && index == 0 && iSelectBoxId.length == 1){
+    if (selectedValue != "*"){
         document.getElementById(iSelectButtonId[index]).style.visibility = "visible";
     }
     else if (index < iSelectBoxId.length-1){
@@ -180,50 +120,35 @@ function onSelectChange(obj){
     }
 }
 
-// On Where Column Change add list or textbox
 function onWhereChange(obj){
-    //integrations, traits, properties - add textbox e.g. Google Analytics = true
     objId = obj.id;
     var pos = obj.id[obj.id.length -1];
     var selVal = obj.options[obj.selectedIndex].value;
     if (selVal == "integrations" || selVal == "traits" || selVal == "properties" || selVal == "context.traits"){
-        
-        // get number of where obj, if texbox element exists dont do anything, if not create new one
         if (iTextBoxId.length == 0 || (iTextBoxId.includes("textBox"+pos) == false)){
-            var oTextBox = document.createElement("input");
-            oTextBox.type = "text";
-            oTextBox.setAttribute("id","textBox" + pos);
+            var oTextBox = generateTextBox("textBox" + pos,20,1);
             iTextBoxId.push("textBox" + pos);
             obj.parentNode.insertBefore(oTextBox, obj.nextSibling);
         }
     }
     else {
-        // if textbox exists remove
         if (iTextBoxId.includes("textBox"+pos) == true){
             var index = iTextBoxId.indexOf("textBox"+pos);
             document.getElementById("textBox"+pos).remove();
             iTextBoxId.splice(index, 1);
         }
     }
-    
-    // if operator does not exists create
     if (iOperatorId.includes("opId"+pos) == false){
         var oOperator = generateOperators(pos);
         obj.parentElement.appendChild(oOperator);
-        var oValue = document.createElement("input");
-        oValue.type = "text";
-        // crear textbox con el mismo numero del whereelement
-        oValue.setAttribute("id","valueBox" + pos);
-        obj.parentElement.appendChild(oValue);
-            
+        var oValue = generateTextBox("valueBox" + pos,20,1);
+        obj.parentElement.appendChild(oValue);    
     }
-
 }
 
 function onOperatorChange(obj){
     var temp = obj.id.substr(-1);
     if(obj.value == "IS NULL" || obj.value == "IS NOT NULL"){
-
         document.getElementById("valueBox"+temp).style.visibility = "hidden";
     }  
     else{
@@ -231,7 +156,6 @@ function onOperatorChange(obj){
     } 
 }
 
-// Remove select column
 function removeColumn(oButton){
     var id = oButton.id;
     oButton.parentElement.remove();
@@ -240,24 +164,19 @@ function removeColumn(oButton){
     iSelectButtonId.splice(index, 1);
     iSelectBoxId.splice(index, 1);
 
-    //make the plus visible
     if (iSelectButtonId.length == index && iRemoveButtonId.length > 1){
         document.getElementById(iSelectButtonId[index-1]).style.visibility = "visible";
     }
-    //hide the remove and make the plus visible
     else if (iRemoveButtonId.length == 1){
         document.getElementById(iSelectButtonId[0]).style.visibility = "visible";
         document.getElementById(iRemoveButtonId[0]).style.visibility = "hidden";
     }
 }
 
-// Remove where condition
 function removeWhere(oButton){
     var id = oButton.id;
     var oDiv = oButton.parentElement;
     oDiv.parentElement.remove();
-
-    // if it´s the first element in the where, remove and/or in the next element
 
     var index = iWhereButtonRemId.indexOf(id);
     iWhereButtonId.splice(index, 1);
@@ -269,109 +188,55 @@ function removeWhere(oButton){
         document.getElementById("andOr"+lastChar).remove();
     }
 
-    //make the plus visible
     if (iWhereButtonId.length == index && iWhereButtonRemId.length > 1){
         document.getElementById(iWhereButtonId[index-1]).style.visibility = "visible";
     }
-    //hide the remove and make the plus visible
     else if (iWhereButtonRemId.length == 1){
         document.getElementById(iWhereButtonId[0]).style.visibility = "visible";
         document.getElementById(iWhereButtonRemId[0]).style.visibility = "hidden";
     }
 }
 
-// Generate the WHERE Conditions
 function generateWhereDiv(onInit){
-
-    // odiv contains odiv2 and odiv3
     var oDiv = document.createElement("div");
-    oDiv.setAttribute("id","cond"+ this.iWhereCounter);
-
-    var pos = oDiv.id[oDiv.id.length -1];
-
-    // odiv2 is div with condition
     var oDiv2 = document.createElement("div");
-    //oDiv2.setAttribute("id","andorDiv"+ this.iWhereCounter);
+    var oDiv3 = document.createElement("div");
 
-    // And/Or switch going in odiv2
     if (iWhereOptId.length > 0){
-        var aCols = ["AND","OR"];
-
-        var oSel = document.createElement("select");
-        oSel.setAttribute("id","andOr"+pos);
-        oSel.setAttribute("style","margin:5px;");
-
-        aCols.forEach(function(sText){
-            var oOpt = document.createElement("option");
-            oOpt.appendChild(document.createTextNode(sText));
-            oOpt.setAttribute("value",sText);
-            oSel.appendChild(oOpt);
-        }); 
-
+        var oSel = generateSelectMenu("andOr"+this.iWhereCounter,["AND","OR"],1);
         oDiv2.appendChild(oSel);
     }
 
-    //where condition increments TODO ADD MORE
     var aColumns = ["Add Object","anonymousid","messageid","timestamp","originaltimestamp","type","userid",
     "event","name","groupid","previousid","integrations","traits","properties","context.ip","context.app.name",
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
     "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
-
-    var oSelect = document.createElement("select");
-    oSelect.setAttribute("id",this.sWDefaultId + this.iWhereCounter);
-    oSelect.setAttribute("style","margin:5px;");
-    oSelect.setAttribute("onchange", "onWhereChange(this)");
-    iWhereOptId.push(this.sWDefaultId + this.iWhereCounter);
-
-        if (iWhereOptId.length > 1){
+    if (iWhereOptId.length > 1){
         aColumns.shift();
     }
 
-    aColumns.forEach(function(sText){
-        var oOption = document.createElement("option");
-        oOption.appendChild(document.createTextNode(sText));
-        oOption.setAttribute("value",sText);
-        oSelect.appendChild(oOption);
-    });
-
+    var oSelect = generateSelectMenu(this.sWDefaultId + this.iWhereCounter,aColumns,1);
+    oSelect.setAttribute("onchange", "onWhereChange(this)");
+    iWhereOptId.push(this.sWDefaultId + this.iWhereCounter);
     oDiv2.appendChild(oSelect);
 
     if (iWhereOptId.length > 1){
             var oOperator = generateOperators(this.iWhereCounter);
             oDiv2.appendChild(oOperator);
-
-            var oValue = document.createElement("input");
-            oValue.type = "text";
-            oValue.setAttribute("id","valueBox" + this.iWhereCounter);
+            var oValue = generateTextBox("valueBox" + this.iWhereCounter,20,1);
             oDiv2.appendChild(oValue);
     }
-
     oDiv.appendChild(oDiv2); 
-    
-    // odiv3 is ADD REMOVE options
-    var oDiv3 = document.createElement("div");
-    oDiv3.setAttribute("id","condbuttons"+ this.iWhereCounter);
-
-    var oBtn = document.createElement("button");
-    oBtn.setAttribute("id","wherebutton"+this.iWhereCounter);
-    iWhereButtonId.push("wherebutton"+this.iWhereCounter);
-
-    var oSpan = document.createElement("span");
-    oBtn.appendChild(oSpan);
+      
+    var oBtn = generateButton("wherebutton"+this.iWhereCounter,"+",1);
     oBtn.setAttribute("onclick","addWhere(this)");
-    oBtn.appendChild(document.createTextNode("+"));
+    iWhereButtonId.push("wherebutton"+this.iWhereCounter);
     oDiv3.appendChild(oBtn);
 
-    var oBtn2 = document.createElement("button");
-    oBtn2.setAttribute("id","buttonwrem"+this.iWhereCounter);
-    iWhereButtonRemId.push("buttonwrem"+this.iWhereCounter);
-
-    var oSpan2 = document.createElement("span");
-    oSpan2.appendChild(document.createTextNode("Remove"));
-    oBtn2.appendChild(oSpan2);
+    var oBtn2 = generateButton("buttonwrem"+this.iWhereCounter,"Remove",1);
     oBtn2.setAttribute("onclick","removeWhere(this)");
-
+    iWhereButtonRemId.push("buttonwrem"+this.iWhereCounter);
     oDiv3.appendChild(oBtn2);
     oDiv.appendChild(oDiv3);
 
@@ -382,7 +247,6 @@ function generateWhereDiv(onInit){
         document.getElementById(iWhereButtonRemId[0]).style.visibility = "visible";
         document.getElementById(iWhereButtonId[iWhereButtonId.length-2]).style.visibility = "hidden";
     } 
-    
     document.getElementById("whereclause").appendChild(oDiv);
 }
 
@@ -395,7 +259,6 @@ function generateAthenaScript(){
     if (temp == "*"){
         finalSelect += '*';
     }
-
     else{
         var temp2 = "";
         iSelectBoxId.forEach(function(sText){
@@ -411,7 +274,7 @@ function generateAthenaScript(){
     finalSelect += ' FROM "apilogs"."' + document.getElementById("tablename").value+'" ';
     finalSelect = finalSelect.split('""').join('"');
 
-    // GET WHERE CONDITIONS 
+    // GET WHERE CONDITIONS
     var where = document.getElementById(iWhereOptId[0]);
     if (where.options[where.selectedIndex].value != "Add Object"){
         var temp3 = "WHERE ";
@@ -441,10 +304,8 @@ function generateAthenaScript(){
             // third level properties from context traits and textbox G5
             var oProps5 = ["context.traits"];
 
-            // Get Operator ID equals, not equals, ...
             var col2 = document.getElementById("opId"+pos);
-                col2 = col2.options[col2.selectedIndex].value;
-
+            col2 = col2.options[col2.selectedIndex].value;
             var res = document.getElementById("valueBox"+pos).value;
             res = res.split(", ").join(",");
             res = res.split("'").join("");
@@ -541,15 +402,12 @@ function generateAthenaScript(){
     if(document.getElementById("addGroup").checked){
         finalSelect += " GROUP BY " + document.getElementById("groupBox").value;
     }
-
     if(document.getElementById("addOrder").checked){
         finalSelect += " ORDER BY " + document.getElementById("orderBox").value + " " + document.getElementById("asdescSel").value;
     }
-
     if(document.getElementById("addLimit").checked){
         finalSelect += " LIMIT " + document.getElementById("limitBox").value;
     }
-
     finalSelect += ";";
     document.getElementById('sqlcode').value = finalSelect;
 }
@@ -565,12 +423,12 @@ function clearSelect(){
         var elem = document.getElementById(sText);
         elem.parentElement.remove();
     });
-
     iSelectBoxId = []; // select clauses id
     iSelectButtonId = []; // add select button id
     iRemoveButtonId = []; // remove select button id
-    generateObjectDiv(1);
+    generateColumnsDiv(1);
 }
+
 
 function clearWhere(){
     iWhereOptId.forEach(function(sText){
@@ -579,14 +437,11 @@ function clearWhere(){
         elem.parentElement.remove();
     });
 
-    //clean all the arrays and remove parents divs
     iWhereOptId = []; // where cond id
     iWhereButtonId = []; // add where button id
     iWhereButtonRemId = []; // remove where button id
-
     iTextBoxId = []; // subobject box id
     iOperatorId = []; // operator id
-
     generateWhereDiv(true);
 
 }
@@ -615,4 +470,47 @@ function addLimit(checkboxElem) {
   } else {
     document.getElementById("limitBox").style.visibility = "hidden"; 
   }
+}
+
+function generateTextBox(id,size,visib){
+    var oValue = document.createElement("input");
+    oValue.type = "text";
+    oValue.setAttribute("id",id);
+    oValue.setAttribute("size",size);
+    if (visib == 0){
+        oValue.style.visibility = "hidden"; 
+    }
+    return oValue;
+}
+
+function generateSelectMenu(id,columns,visib){
+    var oSelect = document.createElement("select");
+    oSelect.setAttribute("id",id);
+    oSelect.setAttribute("style","margin:2px;");
+    if (visib == 0){
+        oSelect.style.visibility = "hidden"; 
+    }
+    
+    columns.forEach(function(sText){
+        var oOption = document.createElement("option");
+        oOption.appendChild(document.createTextNode(sText));
+        oOption.setAttribute("value",sText);
+        oSelect.appendChild(oOption);
+    });
+    return oSelect;
+}
+
+function generateButton(id,text,visib){
+    var oBtn = document.createElement("button");
+    oBtn.setAttribute("id",id);
+
+    if (visib == 0){
+        oBtn.style.visibility = "hidden"; 
+    }
+    
+    oBtn.appendChild(document.createTextNode(text));
+    var oSpan = document.createElement("span");
+    oBtn.appendChild(oSpan);
+
+    return oBtn;
 }
