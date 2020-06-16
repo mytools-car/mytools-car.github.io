@@ -212,7 +212,7 @@ function generateWhereDiv(onInit){
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
     "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
-    if (iWhereOptId.length > 1){
+    if (iWhereOptId.length > 0){
         aColumns.shift();
     }
 
