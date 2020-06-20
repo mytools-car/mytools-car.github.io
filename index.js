@@ -250,7 +250,7 @@ function generateWhereDiv(onInit){
     document.getElementById("whereclause").appendChild(oDiv);
 }
 
-function generateAthenaScript(){
+function generateSQLScript(){
     var finalSelect = "SELECT ";
     var sel = document.getElementById(iSelectBoxId[0]);
     var temp = sel.options[sel.selectedIndex].value;
@@ -304,6 +304,8 @@ function generateAthenaScript(){
             // third level properties from context traits and textbox G5
             var oProps5 = ["context.traits"];
 
+
+
             var col2 = document.getElementById("opId"+pos);
             col2 = col2.options[col2.selectedIndex].value;
             var res = document.getElementById("valueBox"+pos).value;
@@ -311,6 +313,11 @@ function generateAthenaScript(){
             res = res.split("'").join("");
             res = res.split('"').join("");
             res = res.split(",").join("','");
+
+            textbox = document.getElementById("textBox"+pos).value;
+            if (col1 == "traits" || col1 == "properties" || col1 == "context.traits"){
+                textbox = textbox.toLowerCase();
+            }
             
             if (oProps1.includes(col1)){
                 switch(col2) {
@@ -332,16 +339,16 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        temp3 += col1+"['"+ document.getElementById("textBox"+pos).value +"'] " + col2 + " ('" + res + "')";
+                        temp3 += col1+"['"+ textbox +"'] " + col2 + " ('" + res + "')";
                     }
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += col1 +"['"+ document.getElementById("textBox"+pos).value +"'] " + col2;
+                        temp3 += col1 +"['"+ textbox +"'] " + col2;
                     }
                     break;
                     default:
-                        temp3 += col1+"['"+ document.getElementById("textBox"+pos).value +"'] " + col2 + " '" + document.getElementById("valueBox"+pos).value + "'";
+                        temp3 += col1+"['"+ textbox +"'] " + col2 + " '" + document.getElementById("valueBox"+pos).value + "'";
                 }
             }
             else if(oProps3.includes(col1)){
@@ -381,16 +388,16 @@ function generateAthenaScript(){
                 switch(col2) {
                     case "IN":
                     case "NOT IN":{
-                        temp3 += "json_extract_scalar(context['traits'],'$."+document.getElementById("textBox"+pos).value + "') " + col2 + " ('" + res + "')";
+                        temp3 += "json_extract_scalar(context['traits'],'$."+ textbox + "') " + col2 + " ('" + res + "')";
                     }
                     break;
                     case "IS NULL":
                     case "IS NOT NULL":{
-                        temp3 += "json_extract_scalar(context['traits'],'$."+document.getElementById("textBox"+pos).value + "') " + col2;
+                        temp3 += "json_extract_scalar(context['traits'],'$."+ textbox + "') " + col2;
                     }
                     break;
                     default:
-                        temp3 += "json_extract_scalar(context['traits'],'$."+document.getElementById("textBox"+pos).value + "') " + col2 + " '" + document.getElementById("valueBox"+pos).value + "'";
+                        temp3 += "json_extract_scalar(context['traits'],'$."+ textbox + "') " + col2 + " '" + document.getElementById("valueBox"+pos).value + "'";
                 }   
             }
         });
