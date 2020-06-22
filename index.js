@@ -35,15 +35,15 @@ function onInit(){
     this.iTextBoxId = []; // subobject box id
     this.iOperatorId = []; // operator id
 
-    var oValue1 = generateTextBox("groupBox","2",0);
-    var oValue2 = generateTextBox("orderBox","2",0);
-    var oSelect = generateSelectMenu("asdescSel",["ASC","DESC"],0); 
-    var oValue = generateTextBox("limitBox","3",0);
+    var groupBox = generateTextBox("groupBox","2",0);
+    var orderBox = generateTextBox("orderBox","2",0);
+    var select = generateSelectMenu("asdescSel",["ASC","DESC"],0); 
+    var limitBox = generateTextBox("limitBox","3",0);
 
-    document.getElementById("group").appendChild(oValue1);
-    document.getElementById("order").appendChild(oValue2);
-    document.getElementById("order").appendChild(oSelect);
-    document.getElementById("limit").appendChild(oValue);
+    document.getElementById("group").appendChild(groupBox);
+    document.getElementById("order").appendChild(orderBox);
+    document.getElementById("order").appendChild(select);
+    document.getElementById("limit").appendChild(limitBox);
 
     generateColumnsDiv(1);
     generateWhereDiv(true);
@@ -51,13 +51,13 @@ function onInit(){
 
 function generateSelect(onInit){
    if(onInit == 1 && iSelectBoxId.length == 0){
-        var aColumns = ["*","COUNT(*)","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
+        var columns = ["*","COUNT(*)","anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid"];
     }
     else{
-        var aColumns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid","COUNT(*)"];
+        var columns = ["anonymousid","context","integrations","messageid","receivedat","timestamp","sentat","originaltimestamp","type","userid","traits","event","properties","name","groupid","previousid","COUNT(*)"];
     }
 
-    var oSelect = generateSelectMenu(this.sDefaultId + this.iSelectCounter,aColumns,1);
+    var oSelect = generateSelectMenu(this.sDefaultId + this.iSelectCounter,columns,1);
     oSelect.setAttribute("onchange", "onSelectChange(this)");
     iSelectBoxId.push(this.sDefaultId + this.iSelectCounter); 
     return oSelect;
@@ -66,24 +66,24 @@ function generateSelect(onInit){
 function generateColumnsDiv(onInit){
     var oDiv = document.createElement("div");
     var oSelect = this.generateSelect(onInit);
-    var oBtn = generateButton("button"+this.iSelectCounter,"+",1);
+    var oAddButton = generateButton("button"+this.iSelectCounter,"+",1);
     iSelectButtonId.push("button"+this.iSelectCounter);
-    oBtn.setAttribute("onclick","addColumn(this)");
+    oAddButton.setAttribute("onclick","addColumn(this)");
 
     oDiv.appendChild(oSelect);
-    oDiv.appendChild(oBtn);
+    oDiv.appendChild(oAddButton);
 
-    var oBtn2 = generateButton("buttonrem"+this.iSelectCounter,"Remove",1);
+    var oRemoveButton = generateButton("buttonrem"+this.iSelectCounter,"Remove",1);
     iRemoveButtonId.push("buttonrem"+this.iSelectCounter);
-    oBtn2.setAttribute("onclick","removeColumn(this)");
-    oDiv.appendChild(oBtn2);
+    oRemoveButton.setAttribute("onclick","removeColumn(this)");
+    oDiv.appendChild(oRemoveButton);
     
     document.getElementById("selectioncriteria").appendChild(oDiv);
     document.getElementById(iRemoveButtonId[0]).style.visibility = "hidden"; 
 
     var selVal = document.getElementById(iSelectBoxId[0]);
     if (selVal.options[selVal.selectedIndex].value == "*" && iSelectButtonId.length == 1){
-        oBtn.style.visibility = "hidden";
+        oAddButton.style.visibility = "hidden";
     }
     else{
         document.getElementById(iRemoveButtonId[0]).style.visibility = "visible";
@@ -92,8 +92,8 @@ function generateColumnsDiv(onInit){
 }
 
 function generateOperators(pos){
-    var aColumns = ["=",">","<",">=","<=","!=","IN","NOT IN","LIKE","NOT LIKE","IS NULL","IS NOT NULL"];
-    var oSelect = generateSelectMenu("opId" + pos,aColumns,1);
+    var columns = ["=",">","<",">=","<=","!=","IN","NOT IN","LIKE","NOT LIKE","IS NULL","IS NOT NULL"];
+    var oSelect = generateSelectMenu("opId" + pos,columns,1);
     oSelect.setAttribute("onchange", "onOperatorChange(this)");
     iOperatorId.push("opId" + this.iWhereCounter);
     return oSelect;
@@ -147,12 +147,12 @@ function onWhereChange(obj){
 }
 
 function onOperatorChange(obj){
-    var temp = obj.id.substr(-1);
+    var id = obj.id.substr(-1);
     if(obj.value == "IS NULL" || obj.value == "IS NOT NULL"){
-        document.getElementById("valueBox"+temp).style.visibility = "hidden";
+        document.getElementById("valueBox"+id).style.visibility = "hidden";
     }  
     else{
-        document.getElementById("valueBox"+temp).style.visibility = "visible";
+        document.getElementById("valueBox"+id).style.visibility = "visible";
     } 
 }
 
@@ -184,8 +184,8 @@ function removeWhere(oButton){
     iWhereOptId.splice(index, 1);
 
     if (index == 0){
-        var lastChar = iWhereOptId[0].substr(-1);
-        document.getElementById("andOr"+lastChar).remove();
+        var id2 = iWhereOptId[0].substr(-1);
+        document.getElementById("andOr"+id2).remove();
     }
 
     if (iWhereButtonId.length == index && iWhereButtonRemId.length > 1){
@@ -207,16 +207,16 @@ function generateWhereDiv(onInit){
         oDiv2.appendChild(oSel);
     }
 
-    var aColumns = ["Add Object","anonymousid","messageid","timestamp","originaltimestamp","type","userid",
+    var columns = ["Add Object","anonymousid","messageid","timestamp","originaltimestamp","type","userid",
     "event","name","groupid","previousid","integrations","traits","properties","context.ip","context.app.name",
     "context.app.version","context.campaign.name","context.campaign.source", "context.campaign.medium","context.device.id",
     "context.device.advertisingid","context.device.adtrackingenabled","context.device.token","context.library.name","context.page.referrer","context.traits"];
 
     if (iWhereOptId.length > 0){
-        aColumns.shift();
+        columns.shift();
     }
 
-    var oSelect = generateSelectMenu(this.sWDefaultId + this.iWhereCounter,aColumns,1);
+    var oSelect = generateSelectMenu(this.sWDefaultId + this.iWhereCounter,columns,1);
     oSelect.setAttribute("onchange", "onWhereChange(this)");
     iWhereOptId.push(this.sWDefaultId + this.iWhereCounter);
     oDiv2.appendChild(oSelect);
@@ -229,19 +229,19 @@ function generateWhereDiv(onInit){
     }
     oDiv.appendChild(oDiv2); 
       
-    var oBtn = generateButton("wherebutton"+this.iWhereCounter,"+",1);
-    oBtn.setAttribute("onclick","addWhere(this)");
+    var oAddBtn = generateButton("wherebutton"+this.iWhereCounter,"+",1);
+    oAddBtn.setAttribute("onclick","addWhere(this)");
     iWhereButtonId.push("wherebutton"+this.iWhereCounter);
-    oDiv3.appendChild(oBtn);
+    oDiv3.appendChild(oAddBtn);
 
-    var oBtn2 = generateButton("buttonwrem"+this.iWhereCounter,"Remove",1);
-    oBtn2.setAttribute("onclick","removeWhere(this)");
+    var oRemoveBtn = generateButton("buttonwrem"+this.iWhereCounter,"Remove",1);
+    oRemoveBtn.setAttribute("onclick","removeWhere(this)");
     iWhereButtonRemId.push("buttonwrem"+this.iWhereCounter);
-    oDiv3.appendChild(oBtn2);
+    oDiv3.appendChild(oRemoveBtn);
     oDiv.appendChild(oDiv3);
 
     if (iWhereButtonId.length == 1){
-        oBtn2.style.visibility = "hidden";
+        oRemoveBtn.style.visibility = "hidden";
     }
     else{
         document.getElementById(iWhereButtonRemId[0]).style.visibility = "visible";
@@ -304,8 +304,6 @@ function generateSQLScript(){
             // third level properties from context traits and textbox G5
             var oProps5 = ["context.traits"];
 
-
-
             var col2 = document.getElementById("opId"+pos);
             col2 = col2.options[col2.selectedIndex].value;
             var res = document.getElementById("valueBox"+pos).value;
@@ -314,8 +312,9 @@ function generateSQLScript(){
             res = res.split('"').join("");
             res = res.split(",").join("','");
 
-            textbox = document.getElementById("textBox"+pos).value;
-            if (col1 == "traits" || col1 == "properties" || col1 == "context.traits"){
+            var textbox;
+            if (oProps2.includes(col1) || oProps5.includes(col1)){
+                textbox = document.getElementById("textBox"+pos).value;
                 textbox = textbox.toLowerCase();
             }
             
@@ -401,7 +400,6 @@ function generateSQLScript(){
                 }   
             }
         });
-
         finalSelect += temp3;
         
     }
@@ -484,6 +482,7 @@ function generateTextBox(id,size,visib){
     oValue.type = "text";
     oValue.setAttribute("id",id);
     oValue.setAttribute("size",size);
+    oValue.setAttribute("style","font-size:12px;");
     if (visib == 0){
         oValue.style.visibility = "hidden"; 
     }
@@ -494,6 +493,7 @@ function generateSelectMenu(id,columns,visib){
     var oSelect = document.createElement("select");
     oSelect.setAttribute("id",id);
     oSelect.setAttribute("style","margin:2px;");
+    oSelect.setAttribute("style","font-size:14px;");
     if (visib == 0){
         oSelect.style.visibility = "hidden"; 
     }
@@ -510,6 +510,7 @@ function generateSelectMenu(id,columns,visib){
 function generateButton(id,text,visib){
     var oBtn = document.createElement("button");
     oBtn.setAttribute("id",id);
+    oBtn.setAttribute("style","font-size:12px; margin: 1px 1px;");
 
     if (visib == 0){
         oBtn.style.visibility = "hidden"; 
